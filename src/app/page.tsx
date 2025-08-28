@@ -50,11 +50,11 @@ export default function Home() {
         <div className="mt-6 grid gap-3">
           <textarea className="textarea" placeholder="Paste a quote, note, or reminder…" value={text} onChange={e=>setText(e.target.value)} />
           <div className="flex flex-col sm:flex-row gap-3">
-            <input className="input sm:max-w-xs" placeholder="Tag (optional)" value={tag} onChange={e=>setTag(e.target.value)} />
+            {/* <input className="input sm:max-w-xs" placeholder="Tag (optional)" value={tag} onChange={e=>setTag(e.target.value)} />
             <div className="flex items-center gap-2">
               <label className="text-sm text-neutral-500">Cooldown days</label>
               <input type="number" className="input w-28" value={cooldown} min={0} onChange={e=>setCooldown(parseInt(e.target.value || '0'))} />
-            </div>
+            </div> */}
             <button className="btn w-full sm:w-auto" disabled={loading || !text.trim()} onClick={addPrompt}>{loading ? 'Adding…' : 'Add to memory'}</button>
           </div>
         </div>
