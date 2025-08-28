@@ -1,0 +1,30 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+
+datasource db {
+    provider = "postgresql"
+    url = env("DATABASE_URL")
+}
+
+
+model Prompt {
+    id Int @id @default(autoincrement())
+    text String
+    tag String? // optional category
+    active Boolean @default(true)
+    cooldown Int @default(0) // custom cooldown days for this prompt
+    timesSent Int @default(0)
+    lastSent DateTime? @db.Timestamptz(6)
+    createdAt DateTime @default(now()) @db.Timestamptz(6)
+    deliveries Delivery[]
+}
+
+
+model Delivery {
+    id Int @id @default(autoincrement())
+    promptId Int
+    sentAt DateTime @default(now()) @db.Timestamptz(6)
+    Prompt Prompt @relation(fields: [promptId], references: [id])
+}
