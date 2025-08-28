@@ -48,7 +48,7 @@ export default function Home() {
         {/* <p className="mt-2 text-neutral-600 dark:text-neutral-300">We’ll email you one randomly chosen (but least-recent) line every day. Paste more below.</p> */}
 
         <div className="mt-6 grid gap-3">
-          <textarea className="textarea" placeholder="Paste a quote, note, or reminder…" value={text} onChange={e=>setText(e.target.value)} />
+          <textarea className="textarea" placeholder="paste commonplace..." value={text} onChange={e=>setText(e.target.value)} />
           <div className="flex flex-col sm:flex-row gap-3">
             {/* <input className="input sm:max-w-xs" placeholder="Tag (optional)" value={tag} onChange={e=>setTag(e.target.value)} />
             <div className="flex items-center gap-2">
@@ -60,7 +60,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+      {/* <section className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
         <input className="input" placeholder="Search…" value={query} onChange={e=>setQuery(e.target.value)} />
         <div className="flex items-center gap-2">
           <FilterChip active={filter==='all'} onClick={()=>setFilter('all')}>All</FilterChip>
@@ -86,7 +86,7 @@ export default function Home() {
             </div>
           </article>
         ))}
-      </section>
+      </section> */}
     </div>
   )
 }
