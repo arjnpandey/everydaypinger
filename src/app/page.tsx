@@ -11,6 +11,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false)
   const [query, setQuery] = useState('')
   const [filter, setFilter] = useState<'all' | 'unsent' | 'recent'>('all')
+  const [activeTab, setActiveTab] = useState<'add' | 'browse'>('add')
 
   const filtered = useMemo(() => {
     let list = prompts
@@ -44,49 +45,80 @@ export default function Home() {
 
   return (
     <div className="space-y-8">
-      <section className="card p-6 md:p-8">
-        {/* <p className="mt-2 text-neutral-600 dark:text-neutral-300">We’ll email you one randomly chosen (but least-recent) line every day. Paste more below.</p> */}
+      {/* Tab Navigation */}
+      <div className="flex border-b border-neutral-200 dark:border-neutral-800">
+        <button
+          onClick={() => setActiveTab('add')}
+          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+            activeTab === 'add'
+              ? 'border-black text-black dark:border-white dark:text-white'
+              : 'border-transparent text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-300'
+          }`}
+        >
+          Add Quote
+        </button>
+        <button
+          onClick={() => setActiveTab('browse')}
+          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+            activeTab === 'browse'
+              ? 'border-black text-black dark:border-white dark:text-white'
+              : 'border-transparent text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-300'
+          }`}
+        >
+          Browse Quotes
+        </button>
+      </div>
 
-        <div className="mt-6 grid gap-3">
-          <textarea className="textarea" placeholder="paste commonplace..." value={text} onChange={e=>setText(e.target.value)} />
-          <div className="flex flex-col sm:flex-row gap-3">
-            {/* <input className="input sm:max-w-xs" placeholder="Tag (optional)" value={tag} onChange={e=>setTag(e.target.value)} />
-            <div className="flex items-center gap-2">
-              <label className="text-sm text-neutral-500">Cooldown days</label>
-              <input type="number" className="input w-28" value={cooldown} min={0} onChange={e=>setCooldown(parseInt(e.target.value || '0'))} />
-            </div> */}
-            <button className="btn w-full sm:w-auto" disabled={loading || !text.trim()} onClick={addPrompt}>{loading ? 'Adding…' : 'Add to memory'}</button>
+      {/* Add Quote Tab */}
+      {activeTab === 'add' && (
+        <section className="card p-6 md:p-8">
+          <div className="mt-6 grid gap-3">
+            <textarea className="textarea" placeholder="paste commonplace..." value={text} onChange={e=>setText(e.target.value)} />
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button className="btn w-full sm:w-auto" disabled={loading || !text.trim()} onClick={addPrompt}>{loading ? 'Adding…' : 'Add to memory'}</button>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      {/* <section className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
-        <input className="input" placeholder="Search…" value={query} onChange={e=>setQuery(e.target.value)} />
-        <div className="flex items-center gap-2">
-          <FilterChip active={filter==='all'} onClick={()=>setFilter('all')}>All</FilterChip>
-          <FilterChip active={filter==='unsent'} onClick={()=>setFilter('unsent')}>Unsent</FilterChip>
-          <FilterChip active={filter==='recent'} onClick={()=>setFilter('recent')}>Most recent</FilterChip>
-        </div>
-      </section>
+      {/* Browse Quotes Tab */}
+      {activeTab === 'browse' && (
+        <>
+          <section className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+            <input className="input" placeholder="Search quotes..." value={query} onChange={e=>setQuery(e.target.value)} />
+            <div className="flex items-center gap-2">
+              <FilterChip active={filter==='all'} onClick={()=>setFilter('all')}>All</FilterChip>
+              <FilterChip active={filter==='unsent'} onClick={()=>setFilter('unsent')}>Unsent</FilterChip>
+              <FilterChip active={filter==='recent'} onClick={()=>setFilter('recent')}>Most recent</FilterChip>
+            </div>
+          </section>
 
-      <section className="grid gap-3">
-        {filtered.length === 0 && (<div className="text-sm text-neutral-500">No prompts yet. Add your first one above.</div>)}
-        {filtered.map(p => (
-          <article key={p.id} className="card p-4 md:p-5">
-            <div className="flex items-start justify-between gap-3">
-              <div className="space-y-2 w-full">
-                <p className="whitespace-pre-wrap leading-relaxed">{p.text}</p>
-                <div className="flex flex-wrap items-center gap-2 text-xs text-neutral-500">
-                  <span className="badge">Sent {p.timesSent}×</span>
-                  <span className="badge">{p.lastSent ? `Last: ${new Date(p.lastSent).toLocaleString()}` : 'Never sent'}</span>
-                  <span className="badge">Cooldown: {p.cooldown || 0}d</span>
-                  {p.tag && <span className="badge">#{p.tag}</span>}
+          <section className="grid gap-3">
+            {filtered.length === 0 && (
+              <div className="text-center py-8">
+                <div className="text-sm text-neutral-500">
+                  {query.trim() ? 'No quotes match your search.' : 'No quotes yet. Add your first one in the "Add Quote" tab.'}
                 </div>
               </div>
-            </div>
-          </article>
-        ))}
-      </section> */}
+            )}
+            {filtered.map(p => (
+              <article key={p.id} className="card p-4 md:p-5">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="space-y-2 w-full">
+                    <p className="whitespace-pre-wrap leading-relaxed">{p.text}</p>
+                    <div className="flex flex-wrap items-center gap-2 text-xs text-neutral-500">
+                      <span className="badge">Sent {p.timesSent}×</span>
+                      <span className="badge">{p.lastSent ? `Last: ${new Date(p.lastSent).toLocaleString()}` : 'Never sent'}</span>
+                      <span className="badge">Cooldown: {p.cooldown || 0}d</span>
+                      {p.tag && <span className="badge">#{p.tag}</span>}
+                    </div>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </section>
+        </>
+      )}
     </div>
   )
 }
