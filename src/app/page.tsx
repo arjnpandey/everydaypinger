@@ -74,104 +74,107 @@ export default function Home() {
         </button>
       </div>
 
-      {/* Add Quote Tab */}
-      {activeTab === 'add' && (
-        <section className="card p-8">
-          <h2 className="text-xl font-semibold mb-4">Add New Quote</h2>
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="quote-text" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Quote Text
-              </label>
-              <textarea 
-                id="quote-text"
-                className="textarea" 
-                placeholder="Paste your quote here..." 
-                value={text} 
-                onChange={e=>setText(e.target.value)} 
-              />
-            </div>
-            <button 
-              className="btn w-full sm:w-auto" 
-              disabled={loading || !text.trim()} 
-              onClick={addPrompt}
-            >
-              {loading ? 'Adding…' : 'Add to Memory'}
-            </button>
-          </div>
-        </section>
-      )}
-
-      {/* Browse Quotes Tab */}
-      {activeTab === 'browse' && (
-        <>
-          <section className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-            <div className="w-full md:w-96">
-              <input 
-                className="input" 
-                placeholder="Search quotes..." 
-                value={query} 
-                onChange={e=>setQuery(e.target.value)} 
-              />
-            </div>
-            <div className="flex items-center gap-2">
-              <FilterChip active={filter==='all'} onClick={()=>setFilter('all')}>All</FilterChip>
-              <FilterChip active={filter==='unsent'} onClick={()=>setFilter('unsent')}>Unsent</FilterChip>
-              <FilterChip active={filter==='recent'} onClick={()=>setFilter('recent')}>Most Recent</FilterChip>
-            </div>
-          </section>
-
-          <section className="space-y-4">
-            {filtered.length === 0 && (
-              <div className="text-center py-12">
-                <div className="text-gray-500 dark:text-gray-400">
-                  {query.trim() ? 'No quotes match your search.' : 'No quotes yet. Add your first one in the "Add Quote" tab.'}
-                </div>
+      {/* Tab Content Container - Fixed Width */}
+      <div className="w-full">
+        {/* Add Quote Tab */}
+        {activeTab === 'add' && (
+          <section className="card p-8">
+            <h2 className="text-xl font-semibold mb-4">Add New Quote</h2>
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="quote-text" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Quote Text
+                </label>
+                <textarea 
+                  id="quote-text"
+                  className="textarea" 
+                  placeholder="Paste your quote here..." 
+                  value={text} 
+                  onChange={e=>setText(e.target.value)} 
+                />
               </div>
-            )}
-            {filtered.map(p => (
-              <article key={p.id} className="card p-6">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="space-y-3 flex-1">
-                    <blockquote className="text-gray-800 dark:text-gray-200 leading-relaxed">
-                      "{p.text}"
-                    </blockquote>
-                    <div className="flex flex-wrap items-center gap-2 text-xs">
-                      <span className="badge">Sent {p.timesSent}×</span>
-                      <span className="badge">
-                        {p.lastSent ? `Last: ${new Date(p.lastSent).toLocaleDateString()}` : 'Never sent'}
-                      </span>
-                      <span className="badge">Cooldown: {p.cooldown || 0}d</span>
-                      {p.tag && <span className="badge">#{p.tag}</span>}
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => {
-                      if (confirm('Are you sure you want to delete this quote? This action cannot be undone.')) {
-                        deletePrompt(p.id)
-                      }
-                    }}
-                    disabled={deletingId === p.id}
-                    className="delete-btn"
-                    title="Delete quote"
-                  >
-                    {deletingId === p.id ? (
-                      <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                    ) : (
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
-                    )}
-                  </button>
-                </div>
-              </article>
-            ))}
+              <button 
+                className="btn w-full sm:w-auto" 
+                disabled={loading || !text.trim()} 
+                onClick={addPrompt}
+              >
+                {loading ? 'Adding…' : 'Add to Memory'}
+              </button>
+            </div>
           </section>
-        </>
-      )}
+        )}
+
+        {/* Browse Quotes Tab */}
+        {activeTab === 'browse' && (
+          <div className="space-y-6">
+            <section className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+              <div className="w-full md:w-96">
+                <input 
+                  className="input" 
+                  placeholder="Search quotes..." 
+                  value={query} 
+                  onChange={e=>setQuery(e.target.value)} 
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <FilterChip active={filter==='all'} onClick={()=>setFilter('all')}>All</FilterChip>
+                <FilterChip active={filter==='unsent'} onClick={()=>setFilter('unsent')}>Unsent</FilterChip>
+                <FilterChip active={filter==='recent'} onClick={()=>setFilter('recent')}>Most Recent</FilterChip>
+              </div>
+            </section>
+
+            <section className="space-y-4">
+              {filtered.length === 0 && (
+                <div className="text-center py-12">
+                  <div className="text-gray-500 dark:text-gray-400">
+                    {query.trim() ? 'No quotes match your search.' : 'No quotes yet. Add your first one in the "Add Quote" tab.'}
+                  </div>
+                </div>
+              )}
+              {filtered.map(p => (
+                <article key={p.id} className="card p-6">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="space-y-3 flex-1">
+                      <blockquote className="text-gray-800 dark:text-gray-200 leading-relaxed">
+                        "{p.text}"
+                      </blockquote>
+                      <div className="flex flex-wrap items-center gap-2 text-xs">
+                        <span className="badge">Sent {p.timesSent}×</span>
+                        <span className="badge">
+                          {p.lastSent ? `Last: ${new Date(p.lastSent).toLocaleDateString()}` : 'Never sent'}
+                        </span>
+                        <span className="badge">Cooldown: {p.cooldown || 0}d</span>
+                        {p.tag && <span className="badge">#{p.tag}</span>}
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => {
+                        if (confirm('Are you sure you want to delete this quote? This action cannot be undone.')) {
+                          deletePrompt(p.id)
+                        }
+                      }}
+                      disabled={deletingId === p.id}
+                      className="delete-btn"
+                      title="Delete quote"
+                    >
+                      {deletingId === p.id ? (
+                        <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                      ) : (
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      )}
+                    </button>
+                  </div>
+                </article>
+              ))}
+            </section>
+          </div>
+        )}
+      </div>
     </div>
   )
 }
