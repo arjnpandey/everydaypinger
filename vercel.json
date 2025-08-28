@@ -3,7 +3,6 @@
       {
         "path": "/api/send-daily",
         "schedule": "0 8 * * *",
-        "method": "POST",
         "headers": {
           "x-cron-secret": "@cron_secret"
         }
