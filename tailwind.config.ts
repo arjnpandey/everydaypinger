@@ -1,0 +1,35 @@
+import type { Config } from 'tailwindcss'
+
+const config: Config = {
+  content: [
+    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+  ],
+  theme: { extend: { boxShadow: { soft: '0 8px 30px rgba(0,0,0,0.06)' } } },
+  plugins: [],
+}
+export default config
+
+// ------------------------------------------------
+// 4) postcss.config.js (repo root)
+// ------------------------------------------------
+module.exports = { plugins: { tailwindcss: {}, autoprefixer: {} } }
+
+// ------------------------------------------------
+// 5) src/app/globals.css
+// ------------------------------------------------
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: light dark; }
+html, body { height: 100%; }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 9999px; }
+.container-max { @apply max-w-3xl mx-auto px-4; }
+.card { @apply rounded-2xl border border-neutral-200/70 dark:border-neutral-800 bg-white/80 dark:bg-neutral-900/60 shadow-soft; }
+.btn { @apply inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-medium bg-black text-white hover:bg-black/90 disabled:opacity-50 disabled:cursor-not-allowed; }
+.input { @apply w-full rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-black/10; }
+.textarea { @apply input min-h-[120px]; }
+.badge { @apply inline-flex items-center gap-1 rounded-lg bg-neutral-100 dark:bg-neutral-800 px-2 py-1 text-xs text-neutral-700 dark:text-neutral-300; }
