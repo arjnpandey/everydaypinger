@@ -6,19 +6,29 @@ export const metadata: Metadata = { title: 'commonplace pinger', description: 'R
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="min-h-screen bg-gradient-to-b from-neutral-50 to-white dark:from-neutral-950 dark:to-neutral-900 text-neutral-900 dark:text-neutral-100">
-        <header className="sticky top-0 z-10 border-b border-neutral-200/70 dark:border-neutral-800/80 backdrop-blur bg-white/70 dark:bg-neutral-900/50">
-          <div className="container-max flex items-center justify-between py-3">
-            <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-xl bg-black text-white grid place-items-center font-semibold">M</div>
-              <span className="font-semibold">arjuns commonplace</span>
+      <body className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+        <header className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+          <div className="container-max flex items-center justify-between py-6">
+            <div className="flex items-center gap-3">
+              <div className="h-8 w-8 rounded-md bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 grid place-items-center font-semibold text-sm">
+                M
+              </div>
+              <span className="font-semibold text-lg">Memory Pinger</span>
             </div>
-            <nav className="text-sm text-neutral-500">i guess anybody can make a post</nav>
+            <nav className="text-sm text-gray-500 dark:text-gray-400">
+              hosted · serverless cron
+            </nav>
           </div>
         </header>
-        <main className="container-max py-8">{children}</main>
-        <footer className="mt-16 border-t border-neutral-200/70 dark:border-neutral-800/80">
-          <div className="container-max py-6 text-sm text-neutral-500">© {new Date().getFullYear()} Memory Pinger</div>
+        
+        <main className="container-max py-12">
+          {children}
+        </main>
+        
+        <footer className="mt-16 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+          <div className="container-max py-8 text-sm text-gray-500 dark:text-gray-400">
+            © {new Date().getFullYear()} Memory Pinger. Built with Next.js and inspired by the Dario theme.
+          </div>
         </footer>
       </body>
     </html>

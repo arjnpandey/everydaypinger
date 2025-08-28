@@ -55,23 +55,19 @@ export default function Home() {
   return (
     <div className="space-y-8">
       {/* Tab Navigation */}
-      <div className="flex border-b border-neutral-200 dark:border-neutral-800">
+      <div className="flex border-b border-gray-200 dark:border-gray-700">
         <button
           onClick={() => setActiveTab('add')}
-          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-            activeTab === 'add'
-              ? 'border-black text-black dark:border-white dark:text-white'
-              : 'border-transparent text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-300'
+          className={`tab-button ${
+            activeTab === 'add' ? 'tab-button-active' : 'tab-button-inactive'
           }`}
         >
           Add Quote
         </button>
         <button
           onClick={() => setActiveTab('browse')}
-          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-            activeTab === 'browse'
-              ? 'border-black text-black dark:border-white dark:text-white'
-              : 'border-transparent text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-300'
+          className={`tab-button ${
+            activeTab === 'browse' ? 'tab-button-active' : 'tab-button-inactive'
           }`}
         >
           Browse Quotes
@@ -80,12 +76,28 @@ export default function Home() {
 
       {/* Add Quote Tab */}
       {activeTab === 'add' && (
-        <section className="card p-6 md:p-8">
-          <div className="mt-6 grid gap-3">
-            <textarea className="textarea" placeholder="paste commonplace..." value={text} onChange={e=>setText(e.target.value)} />
-            <div className="flex flex-col sm:flex-row gap-3">
-              <button className="btn w-full sm:w-auto" disabled={loading || !text.trim()} onClick={addPrompt}>{loading ? 'Adding…' : 'Add to memory'}</button>
+        <section className="card p-8">
+          <h2 className="text-xl font-semibold mb-4">Add New Quote</h2>
+          <div className="space-y-4">
+            <div>
+              <label htmlFor="quote-text" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Quote Text
+              </label>
+              <textarea 
+                id="quote-text"
+                className="textarea" 
+                placeholder="Paste your quote here..." 
+                value={text} 
+                onChange={e=>setText(e.target.value)} 
+              />
             </div>
+            <button 
+              className="btn w-full sm:w-auto" 
+              disabled={loading || !text.trim()} 
+              onClick={addPrompt}
+            >
+              {loading ? 'Adding…' : 'Add to Memory'}
+            </button>
           </div>
         </section>
       )}
@@ -93,31 +105,42 @@ export default function Home() {
       {/* Browse Quotes Tab */}
       {activeTab === 'browse' && (
         <>
-          <section className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
-            <input className="input" placeholder="Search quotes..." value={query} onChange={e=>setQuery(e.target.value)} />
+          <section className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div className="w-full md:w-96">
+              <input 
+                className="input" 
+                placeholder="Search quotes..." 
+                value={query} 
+                onChange={e=>setQuery(e.target.value)} 
+              />
+            </div>
             <div className="flex items-center gap-2">
               <FilterChip active={filter==='all'} onClick={()=>setFilter('all')}>All</FilterChip>
               <FilterChip active={filter==='unsent'} onClick={()=>setFilter('unsent')}>Unsent</FilterChip>
-              <FilterChip active={filter==='recent'} onClick={()=>setFilter('recent')}>Most recent</FilterChip>
+              <FilterChip active={filter==='recent'} onClick={()=>setFilter('recent')}>Most Recent</FilterChip>
             </div>
           </section>
 
-          <section className="grid gap-3">
+          <section className="space-y-4">
             {filtered.length === 0 && (
-              <div className="text-center py-8">
-                <div className="text-sm text-neutral-500">
+              <div className="text-center py-12">
+                <div className="text-gray-500 dark:text-gray-400">
                   {query.trim() ? 'No quotes match your search.' : 'No quotes yet. Add your first one in the "Add Quote" tab.'}
                 </div>
               </div>
             )}
             {filtered.map(p => (
-              <article key={p.id} className="card p-4 md:p-5">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="space-y-2 w-full">
-                    <p className="whitespace-pre-wrap leading-relaxed">{p.text}</p>
-                    <div className="flex flex-wrap items-center gap-2 text-xs text-neutral-500">
+              <article key={p.id} className="card p-6">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="space-y-3 flex-1">
+                    <blockquote className="text-gray-800 dark:text-gray-200 leading-relaxed">
+                      "{p.text}"
+                    </blockquote>
+                    <div className="flex flex-wrap items-center gap-2 text-xs">
                       <span className="badge">Sent {p.timesSent}×</span>
-                      <span className="badge">{p.lastSent ? `Last: ${new Date(p.lastSent).toLocaleString()}` : 'Never sent'}</span>
+                      <span className="badge">
+                        {p.lastSent ? `Last: ${new Date(p.lastSent).toLocaleDateString()}` : 'Never sent'}
+                      </span>
                       <span className="badge">Cooldown: {p.cooldown || 0}d</span>
                       {p.tag && <span className="badge">#{p.tag}</span>}
                     </div>
@@ -129,7 +152,7 @@ export default function Home() {
                       }
                     }}
                     disabled={deletingId === p.id}
-                    className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors disabled:opacity-50"
+                    className="delete-btn"
                     title="Delete quote"
                   >
                     {deletingId === p.id ? (
@@ -155,7 +178,14 @@ export default function Home() {
 
 function FilterChip({ active, children, onClick }: { active?: boolean; children: React.ReactNode; onClick?: ()=>void }) {
   return (
-    <button onClick={onClick} className={'rounded-xl px-3 py-1.5 text-sm border transition ' + (active ? 'bg-black text-white border-black' : 'border-neutral-300 dark:border-neutral-700 hover:border-neutral-400 dark:hover:border-neutral-600')}>
+    <button 
+      onClick={onClick} 
+      className={`rounded-md px-3 py-1.5 text-sm border transition-colors duration-200 ${
+        active 
+          ? 'bg-gray-900 text-white border-gray-900 dark:bg-gray-100 dark:text-gray-900 dark:border-gray-100' 
+          : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500'
+      }`}
+    >
       {children}
     </button>
   )
