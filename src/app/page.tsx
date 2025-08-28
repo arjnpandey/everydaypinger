@@ -45,8 +45,7 @@ export default function Home() {
   return (
     <div className="space-y-8">
       <section className="card p-6 md:p-8">
-        <h1 className="text-2xl md:text-3xl font-semibold">Capture lines worth remembering</h1>
-        <p className="mt-2 text-neutral-600 dark:text-neutral-300">We’ll email you one randomly chosen (but least-recent) line every day. Paste more below.</p>
+        {/* <p className="mt-2 text-neutral-600 dark:text-neutral-300">We’ll email you one randomly chosen (but least-recent) line every day. Paste more below.</p> */}
 
         <div className="mt-6 grid gap-3">
           <textarea className="textarea" placeholder="Paste a quote, note, or reminder…" value={text} onChange={e=>setText(e.target.value)} />

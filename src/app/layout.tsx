@@ -11,9 +11,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="container-max flex items-center justify-between py-3">
             <div className="flex items-center gap-2">
               <div className="h-8 w-8 rounded-xl bg-black text-white grid place-items-center font-semibold">M</div>
-              <span className="font-semibold">Memory Pinger</span>
+              <span className="font-semibold">arjuns commonplace</span>
             </div>
-            <nav className="text-sm text-neutral-500">hosted · serverless cron</nav>
+            <nav className="text-sm text-neutral-500">i guess anybody can make a post</nav>
           </div>
         </header>
         <main className="container-max py-8">{children}</main>
