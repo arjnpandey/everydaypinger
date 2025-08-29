@@ -13,7 +13,7 @@ function escapeHtml(s: string) {
     .replaceAll("'", "&#39;");
 }
 
-export async function POST(req: Request) {
+export async function GET(req: Request) {
   try {
     const auth = req.headers.get("authorization");
     if (process.env.VERCEL_ENV === "production") {
@@ -43,7 +43,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ status: dry ? "dry-run" : "sent", id: choice.id, preview: { subject } });
   } catch (err: any) {
-    console.error("[POST /api/send-daily] ", err);
+    console.error("[GET /api/send-daily] ", err);
     return NextResponse.json({ error: String(err?.message || err) }, { status: 500 });
   }
 }
