@@ -18,7 +18,7 @@ export async function GET(req: Request) {
     const auth = req.headers.get("authorization");
     if (process.env.VERCEL_ENV === "production") {
       if (!auth || auth !== process.env.CRON_SECRET) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        return NextResponse.json({ error: "Unauthorized " + auth }, { status: 401 });
       }
     }
 
