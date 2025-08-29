@@ -15,7 +15,7 @@ function escapeHtml(s: string) {
 
 export async function POST(req: Request) {
   try {
-    const auth = req.headers.get("x-cron-secret");
+    const auth = req.headers.get("authorization");
     if (process.env.VERCEL_ENV === "production") {
       if (!auth || auth !== process.env.CRON_SECRET) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
