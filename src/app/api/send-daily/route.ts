@@ -15,11 +15,11 @@ function escapeHtml(s: string) {
 
 export async function GET(req: Request) {
   try {
-    const auth = req.headers.get("authorization");
+    const auth = req.headers.get("Authorization");
     if (process.env.VERCEL_ENV === "production") {
       if (!auth || auth !== process.env.CRON_SECRET) {
         return NextResponse.json({ error: "Unauthorized " + auth }, { status: 401 });
-      }
+     }
     }
 
     const url = new URL(req.url);
