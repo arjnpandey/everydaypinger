@@ -19,7 +19,8 @@ export default function Home() {
   const [prompts, setPrompts] = useState<Prompt[]>([])
   const [loading, setLoading] = useState(false)
   const [query, setQuery] = useState('')
-  const [filter, setFilter] = useState<'all' | 'unsent' | 'recent'>('all')
+  // Update the filter state type
+  const [filter, setFilter] = useState<'all' | 'unsent' | 'recent' | 'photos' | 'text'>('all')
   const [activeTab, setActiveTab] = useState<'add' | 'browse'>('add')
   const [deletingId, setDeletingId] = useState<number | null>(null)
   
@@ -28,6 +29,7 @@ export default function Home() {
   const [photoPreview, setPhotoPreview] = useState<string | null>(null)
   const [uploadMode, setUploadMode] = useState<'text' | 'photo'>('text')
 
+  // Update the filtered logic to handle the new filters
   const filtered = useMemo(() => {
     let list = prompts
     if (query.trim()) {
@@ -35,9 +37,11 @@ export default function Home() {
       list = list.filter(p => p.text?.toLowerCase().includes(q) || (p.tag || '').toLowerCase().includes(q))
     }
     if (filter === 'unsent') list = list.filter(p => !p.lastSent)
-    if (filter === 'recent') list = [...list].sort((a,b) => // FIX: replace toSorted
+    if (filter === 'recent') list = [...list].sort((a,b) => 
       (b.lastSent ? new Date(b.lastSent).getTime() : 0) - (a.lastSent ? new Date(a.lastSent).getTime() : 0)
     )
+    if (filter === 'photos') list = list.filter(p => p.promptType === 'PHOTO')
+    if (filter === 'text') list = list.filter(p => p.promptType === 'TEXT')
     return list
   }, [prompts, query, filter])
 

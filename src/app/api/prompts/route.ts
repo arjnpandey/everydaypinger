@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { writeFile, mkdir } from 'fs/promises'
-import { join } from 'path'
+import { put } from '@vercel/blob';
 
 
 export async function GET() {
@@ -34,21 +33,16 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: "File size must be less than 10MB" }, { status: 400 })
       }
       
-      // Save photo to disk
-      const uploadDir = join(process.cwd(), 'public', 'uploads')
-      await mkdir(uploadDir, { recursive: true })
-      
-      const fileName = `${Date.now()}-${photo.name}`
-      const filePath = join(uploadDir, fileName)
-      
-      const bytes = await photo.arrayBuffer()
-      const buffer = Buffer.from(bytes)
-      await writeFile(filePath, buffer)
+      // Upload to Vercel Blob
+      const blob = await put(photo.name, photo, {
+        access: 'public',
+        addRandomSuffix: true, // Adds unique suffix to prevent conflicts
+      });
       
       // Save to database
       const prompt = await prisma.prompt.create({
         data: {
-          photoUrl: `/uploads/${fileName}`,
+          photoUrl: blob.url,
           promptType: 'PHOTO',
           tag: tag || null,
           cooldown: cooldown || 0,

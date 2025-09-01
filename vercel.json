@@ -4,6 +4,12 @@
         "path": "/api/send-daily",
         "schedule": "0 8 * * *"
       }
-    ]
+    ],
+    "functions": {
+      "src/app/api/send-daily/route.ts": {
+        "runtime": "nodejs22.x",
+        "maxDuration": 300
+      }
+    }
   }
   
