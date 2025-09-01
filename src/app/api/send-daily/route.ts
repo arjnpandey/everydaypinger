@@ -17,7 +17,7 @@ export async function GET(req: Request) {
   try {
     const auth = req.headers.get("Authorization");
     if (process.env.VERCEL_ENV === "production") {
-      if (!auth || auth !== `Bearer ${process.env.CRON_SECRET}`) {
+      if (!auth || auth !== `Bearer ${process.env.CRON_SECRET}` {
         return NextResponse.json({ error: "Unauthorized " + auth }, { status: 401 });
      }
     }
@@ -29,8 +29,30 @@ export async function GET(req: Request) {
     if (!choice) return NextResponse.json({ status: "no-prompts" });
 
     const subjectPrefix = process.env.SUBJECT_PREFIX || "Memory Ping: ";
-    const subject = subjectPrefix + choice.text.slice(0, 60);
-    const body = `<p style="font-size:16px;line-height:1.6">${escapeHtml(choice.text)}</p>`;
+    
+    let subject: string;
+    let body: string;
+    
+    if (choice.promptType === 'PHOTO') {
+      // Handle photo prompt
+      const photoFileName = choice.photoUrl?.split('/').pop() || 'photo';
+      subject = subjectPrefix + `Photo: ${photoFileName}`;
+      
+      // Create HTML body with embedded image
+      body = `
+        <div style="font-size:16px;line-height:1.6">
+          <p>Here's your daily photo memory:</p>
+          <img src="${process.env.BASE_URL || 'http://localhost:3000'}${choice.photoUrl}" 
+               alt="Daily Memory" 
+               style="max-width:100%; height:auto; border-radius:8px; margin:20px 0;" />
+          ${choice.tag ? `<p style="color:#666; font-style:italic;">Tag: #${choice.tag}</p>` : ''}
+        </div>
+      `;
+    } else {
+      // Handle text prompt (existing logic)
+      subject = subjectPrefix + choice.text?.slice(0, 60) || 'Memory';
+      body = `<p style="font-size:16px;line-height:1.6">${escapeHtml(choice.text || '')}</p>`;
+    }
 
     if (!dry) {
       await sendEmail(subject, body);
@@ -41,7 +63,13 @@ export async function GET(req: Request) {
       });
     }
 
-    return NextResponse.json({ status: dry ? "dry-run" : "sent", id: choice.id, preview: { subject } });
+    return NextResponse.json({ 
+      status: dry ? "dry-run" : "sent", 
+      id: choice.id, 
+      preview: { subject },
+      type: choice.promptType,
+      hasPhoto: choice.promptType === 'PHOTO'
+    });
   } catch (err: any) {
     console.error("[GET /api/send-daily] ", err);
     return NextResponse.json({ error: String(err?.message || err) }, { status: 500 });
