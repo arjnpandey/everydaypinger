@@ -45,7 +45,6 @@ export async function GET(req: Request) {
           <img src="${process.env.BASE_URL || 'http://localhost:3000'}${choice.photoUrl}" 
                alt="Daily Memory" 
                style="max-width:100%; height:auto; border-radius:8px; margin:20px 0;" />
-          ${choice.tag ? `<p style="color:#666; font-style:italic;">Tag: #${choice.tag}</p>` : ''}
         </div>
       `;
     } else {
