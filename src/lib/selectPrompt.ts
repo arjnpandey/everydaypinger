@@ -55,16 +55,16 @@ const weight = Math.max(1, daysSince);
 if (!p.lastSent || daysSince >= gap) {
 eligible.push({ 
   id: p.id, 
-  text: p.text, 
-  photoUrl: p.photoUrl,
+  text: p.text || undefined, 
+  photoUrl: p.photoUrl || undefined,
   promptType: p.promptType,
   weight 
 });
 }
 fallback.push({ 
   id: p.id, 
-  text: p.text, 
-  photoUrl: p.photoUrl,
+  text: p.text || undefined, 
+  photoUrl: p.photoUrl || undefined,
   promptType: p.promptType,
   weight 
 });
