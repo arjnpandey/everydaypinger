@@ -11,7 +11,9 @@ datasource db {
 
 model Prompt {
     id Int @id @default(autoincrement())
-    text String
+    text String? // Made optional since photos won't have text
+    photoUrl String? // URL/path to the uploaded photo
+    promptType PromptType @default(TEXT) // To distinguish between text and photo prompts
     tag String? // optional category
     active Boolean @default(true)
     cooldown Int @default(0) // custom cooldown days for this prompt
@@ -21,6 +23,10 @@ model Prompt {
     deliveries Delivery[]
 }
 
+enum PromptType {
+    TEXT
+    PHOTO
+}
 
 model Delivery {
     id Int @id @default(autoincrement())
