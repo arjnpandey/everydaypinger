@@ -127,6 +127,8 @@ export default function Home() {
     setPhotoPreview(null)
   }
 
+  const [selectedPhoto, setSelectedPhoto] = useState<{ url: string; prompt: Prompt } | null>(null);
+
   return (
     <div className="space-y-8">
       {/* Tab Navigation */}
@@ -273,7 +275,7 @@ export default function Home() {
               <div className="w-full md:w-96">
                 <input 
                   className="input" 
-                  placeholder="Search quotes..." 
+                  placeholder="Search quotes and photos..." 
                   value={query} 
                   onChange={e=>setQuery(e.target.value)} 
                 />
@@ -282,6 +284,8 @@ export default function Home() {
                 <FilterChip active={filter==='all'} onClick={()=>setFilter('all')}>All</FilterChip>
                 <FilterChip active={filter==='unsent'} onClick={()=>setFilter('unsent')}>Unsent</FilterChip>
                 <FilterChip active={filter==='recent'} onClick={()=>setFilter('recent')}>Most Recent</FilterChip>
+                <FilterChip active={filter==='photos'} onClick={()=>setFilter('photos')}>Photos Only</FilterChip>
+                <FilterChip active={filter==='text'} onClick={()=>setFilter('text')}>Text Only</FilterChip>
               </div>
             </section>
 
@@ -289,32 +293,49 @@ export default function Home() {
               {filtered.length === 0 && (
                 <div className="text-center py-12">
                   <div className="text-gray-500 dark:text-gray-400">
-                    {query.trim() ? 'No quotes match your search.' : 'No quotes yet. Add your first one in the "Add Quote" tab.'}
+                    {query.trim() ? 'No quotes or photos match your search.' : 'No content yet. Add your first quote or photo in the "Add Quote" tab.'}
                   </div>
                 </div>
               )}
-              {filtered.map(p => (
-                <article key={p.id} className="card p-6">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="space-y-3 flex-1">
+              
+              {/* Grid layout for better photo browsing */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filtered.map(p => (
+                  <article key={p.id} className="card p-4 hover:shadow-lg transition-shadow">
+                    <div className="space-y-3">
                       {p.promptType === 'PHOTO' ? (
                         <div className="space-y-3">
-                          <img 
-                            src={p.photoUrl} 
-                            alt="Quote" 
-                            className="w-full max-w-md rounded-lg object-cover"
-                          />
-                          <div className="text-sm text-gray-600 dark:text-gray-400 italic">
-                            Photo 
+                          <div className="relative group">
+                            <img 
+                              src={p.photoUrl} 
+                              alt="Quote" 
+                              className="w-full h-48 object-cover rounded-lg cursor-pointer transition-transform hover:scale-105"
+                              onClick={() => {
+                                // Open photo in full screen modal
+                                setSelectedPhoto({ url: p.photoUrl!, prompt: p });
+                              }}
+                            />
+                            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all rounded-lg flex items-center justify-center">
+                              <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                                </svg>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="text-sm text-gray-600 dark:text-gray-400 italic text-center">
+                            Photo Quote
                           </div>
                         </div>
                       ) : (
-                        <blockquote className="text-gray-800 dark:text-gray-200 leading-relaxed">
-                          "{p.text}"
-                        </blockquote>
+                        <div className="min-h-[12rem] flex items-center justify-center">
+                          <blockquote className="text-gray-800 dark:text-gray-200 leading-relaxed text-center">
+                            "{p.text}"
+                          </blockquote>
+                        </div>
                       )}
                       
-                      <div className="flex flex-wrap items-center gap-2 text-xs">
+                      <div className="flex flex-wrap items-center gap-2 text-xs justify-center">
                         <span className="badge">Sent {p.timesSent}×</span>
                         <span className="badge">
                           {p.lastSent ? `Last: ${new Date(p.lastSent).toLocaleDateString()}` : 'Never sent'}
@@ -323,35 +344,64 @@ export default function Home() {
                         {p.tag && <span className="badge">#{p.tag}</span>}
                         <span className="badge">{p.promptType}</span>
                       </div>
+                      
+                      <div className="flex justify-center">
+                        <button
+                          onClick={() => {
+                            if (confirm('Are you sure you want to delete this item? This action cannot be undone.')) {
+                              deletePrompt(p.id)
+                            }
+                          }}
+                          disabled={deletingId === p.id}
+                          className="delete-btn text-sm px-3 py-1.5"
+                          title="Delete item"
+                        >
+                          {deletingId === p.id ? (
+                            <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                          ) : (
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                          )}
+                        </button>
+                      </div>
                     </div>
-                    <button
-                      onClick={() => {
-                        if (confirm('Are you sure you want to delete this quote? This action cannot be undone.')) {
-                          deletePrompt(p.id)
-                        }
-                      }}
-                      disabled={deletingId === p.id}
-                      className="delete-btn"
-                      title="Delete quote"
-                    >
-                      {deletingId === p.id ? (
-                        <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                      ) : (
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                      )}
-                    </button>
-                  </div>
-                </article>
-              ))}
+                  </article>
+                ))}
+              </div>
             </section>
           </div>
         )}
       </div>
+
+      {/* Photo Modal */}
+      {selectedPhoto && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
+          <div className="relative max-w-4xl max-h-full">
+            <img 
+              src={selectedPhoto.url} 
+              alt="Full size photo" 
+              className="max-w-full max-h-full object-contain rounded-lg"
+            />
+            <button
+              onClick={() => setSelectedPhoto(null)}
+              className="absolute top-4 right-4 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-colors"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            {selectedPhoto.prompt.tag && (
+              <div className="absolute bottom-4 left-4 bg-black bg-opacity-50 text-white px-3 py-1 rounded-full text-sm">
+                #{selectedPhoto.prompt.tag}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
