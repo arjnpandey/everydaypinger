@@ -166,7 +166,7 @@ export default function Home() {
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
                 }`}
               >
-                Text Quote
+                Quote
               </button>
               <button
                 onClick={() => setUploadMode('photo')}
@@ -176,7 +176,7 @@ export default function Home() {
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
                 }`}
               >
-                Photo Quote
+                Photo
               </button>
             </div>
 
@@ -254,35 +254,6 @@ export default function Home() {
                 </div>
               )}
 
-              {/* Common fields for both modes */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="tag" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Tag (optional)
-                  </label>
-                  <input
-                    id="tag"
-                    type="text"
-                    className="input"
-                    placeholder="e.g., motivation, wisdom"
-                    value={tag}
-                    onChange={(e) => setTag(e.target.value)}
-                  />
-                </div>
-                <div>
-                  <label htmlFor="cooldown" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Cooldown (days)
-                  </label>
-                  <input
-                    id="cooldown"
-                    type="number"
-                    min="0"
-                    className="input"
-                    value={cooldown}
-                    onChange={(e) => setCooldown(parseInt(e.target.value) || 0)}
-                  />
-                </div>
-              </div>
 
               <button 
                 className="btn w-full sm:w-auto" 
@@ -334,7 +305,7 @@ export default function Home() {
                             className="w-full max-w-md rounded-lg object-cover"
                           />
                           <div className="text-sm text-gray-600 dark:text-gray-400 italic">
-                            Photo Quote
+                            Photo 
                           </div>
                         </div>
                       ) : (
