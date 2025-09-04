@@ -2,13 +2,6 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { put } from '@vercel/blob';
 
-
-export async function GET() {
-const prompts = await prisma.prompt.findMany({ orderBy: { createdAt: "desc" } });
-return NextResponse.json({ prompts });
-}
-
-
 export async function POST(req: Request) {
   try {
     const contentType = req.headers.get('content-type')
@@ -79,10 +72,15 @@ export async function POST(req: Request) {
   }
 }
 
+export async function GET() {
+  const prompts = await prisma.prompt.findMany({ orderBy: { createdAt: "desc" } });
+  return NextResponse.json({ prompts });
+}
+
 export async function DELETE(req: Request) {
-const { searchParams } = new URL(req.url);
-const id = searchParams.get('id');
-if (!id) return NextResponse.json({ error: "ID required" }, { status: 400 });
-const p = await prisma.prompt.delete({ where: { id: Number(id) } });
-return NextResponse.json({ prompt: p });
+  const { searchParams } = new URL(req.url);
+  const id = searchParams.get('id');
+  if (!id) return NextResponse.json({ error: "ID required" }, { status: 400 });
+  const p = await prisma.prompt.delete({ where: { id: Number(id) } });
+  return NextResponse.json({ prompt: p });
 }
